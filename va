@@ -1,0 +1,342 @@
+import datetime
+import os
+import pyjokes
+import pyttsx3
+import pywhatkit
+import random
+import speech_recognition as sr
+import webbrowser
+import wikipedia
+import requests
+import pygame
+import numpy as np
+import sys
+
+listener = sr.Recognizer()
+engine = pyttsx3.init()
+voices = engine.getProperty('voices')
+engine.setProperty('voice', voices[1].id)
+
+
+def talk(text):
+    engine.say(text)
+    engine.runAndWait()
+
+talk("hi!everyone, welcome to the techexpo")
+talk("i am angel your assistant")
+
+def take_command():
+    try:
+        with sr.Microphone() as source:
+            print('listening...')
+            voice = listener.listen(source)
+            command = listener.recognize_google(voice)
+            command = command.lower()
+            if 'angel' in command:
+                command = command.replace('angel', '')
+                print(command)
+    except:
+        pass
+    return command
+
+def run_angel():
+    command = take_command()
+    print(command)
+    if 'play' in command:
+        song = command.replace('play', '')
+        talk('playing ' + song)
+        pywhatkit.playonyt(song)
+    elif 'time' in command:
+        time = datetime.datetime.now().strftime('%I:%M %p')
+        talk('Current time is ' + time)
+    elif 'who is' in command:
+        person = command.replace('who the is', '')
+        info = wikipedia.summary(person, 1)
+        print(info)
+        talk(info)
+    elif 'do you participate in techexpo' in command:
+        talk('yes,i do')
+    elif 'how are you' in command:
+        talk('I am fine thankyou')
+    elif 'who am i ' in command:
+        talk("you are probably a human with good heart")
+    elif "what is your name" in command:
+        talk("my name is angel")
+    elif "heads or tails" in command:
+            moves = ["head", "tails"]
+            cmove = random.choice(moves)
+            talk("i choose" + cmove)
+    elif "open" in command.lower():
+        if "chrome" in command.lower():
+            talk("Opening Google Chrome")
+            os.startfile(
+                "C:\Program Files (x86)\Google\Chrome\Application"
+            )
+        elif "powerbi" in command.lower():
+            talk("Opening powerbi")
+            os.startfile(
+                r"C:\Program Files\Microsoft Power BI Desktop\bin\PBIDesktop.exe"
+            )
+        else:
+            talk("Opening Microsoft Excel")
+            os.startfile(
+                r"C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE"
+            )
+
+    elif "who created you" in command:
+       talk("I was created by Dafnika")
+    elif "why do you exist" in command:
+        talk("It is a secret")
+    elif"which department are you from" in command:
+        talk("I am from the department of BCA")
+    elif "hey! angel" in command:
+       talk("yes,iam here")
+    elif"hi angel" in command:
+        talk("hi")
+    elif "youtube" in command.lower():
+        talk("Opening Youtube")
+        webbrowser.open("https://youtube.com/")
+    elif "google" in command.lower():
+        talk("Opening Google")
+        webbrowser.open("https://google.com/")
+    elif "stackoverflow" in command.lower():
+        talk("Opening StackOverFlow")
+        webbrowser.open("https://stackoverflow.com/")
+    elif "joke" in command:
+        talk(pyjokes.get_joke())
+    elif "quiz" in command:
+        talk("quiz begins now")
+        talk("who is the president of india")
+        if "Droupadi Murmu" in command.lower():
+                  talk("correct answer")
+        else:
+            talk("wrong answer")
+    elif "weather" in command:
+        api_key = '30d4741c779ba94c470ca1f63045390a'
+
+        user_input = input("Enter city: ")
+
+        weather_data = requests.get(
+            f"https://api.openweathermap.org/data/2.5/weather?q={user_input}&units=imperial&APPID={api_key}")
+
+        if weather_data.json()['cod'] == '404':
+            print("No City Found")
+        else:
+            weather = weather_data.json()['weather'][0]['main']
+            temp = round(weather_data.json()['main']['temp'])
+
+            print(f"The weather in {user_input} is: {weather}")
+            print(f"The temperature in {user_input} is: {temp}ºF")
+    elif "fine" in command or "good" in command:
+        talk("It's good to know that your fine")
+    elif "can you tell me about the recent technology" in command:
+         talk("ai,iot,lifi,oi,virtual reality")
+    elif "are you an ai" in command:
+        talk("yes i am")
+    elif "are you a human" in command:
+        talk("no i am not")
+    elif "who is the father of voice assistant" in command:
+        talk("Simon in 1994")
+    elif "who is the founder of ai" in command:
+        talk("john mc carthy")
+    elif "who is the father of computer science" in command:
+        talk("alan turing")
+    elif "computer was invented by" in command:
+        talk("Charles Babbage in  19th century")
+    elif "tic-tac-toe" in command:
+        pygame.init()
+
+        # ---------
+        # CONSTANTS
+        # ---------
+        WIDTH = 600
+        HEIGHT = 600
+        LINE_WIDTH = 15
+        WIN_LINE_WIDTH = 15
+        BOARD_ROWS = 3
+        BOARD_COLS = 3
+        SQUARE_SIZE = 200
+        CIRCLE_RADIUS = 60
+        CIRCLE_WIDTH = 15
+        CROSS_WIDTH = 25
+        SPACE = 55
+        # rgb: red green blue
+        RED = (255, 0, 0)
+        BG_COLOR = (28, 170, 156)
+        LINE_COLOR = (23, 145, 135)
+        CIRCLE_COLOR = (239, 231, 200)
+        CROSS_COLOR = (66, 66, 66)
+
+        # ------
+        # SCREEN
+        # ------
+        screen = pygame.display.set_mode((WIDTH, HEIGHT))
+        pygame.display.set_caption('TIC TAC TOE')
+        screen.fill(BG_COLOR)
+
+        # -------------
+        # CONSOLE BOARD
+        # -------------
+        board = np.zeros((BOARD_ROWS, BOARD_COLS))
+
+        # ---------
+        # FUNCTIONS
+        # ---------
+        def draw_lines():
+            # 1 horizontal
+            pygame.draw.line(screen, LINE_COLOR, (0, SQUARE_SIZE), (WIDTH, SQUARE_SIZE), LINE_WIDTH)
+            # 2 horizontal
+            pygame.draw.line(screen, LINE_COLOR, (0, 2 * SQUARE_SIZE), (WIDTH, 2 * SQUARE_SIZE), LINE_WIDTH)
+
+            # 1 vertical
+            pygame.draw.line(screen, LINE_COLOR, (SQUARE_SIZE, 0), (SQUARE_SIZE, HEIGHT), LINE_WIDTH)
+            # 2 vertical
+            pygame.draw.line(screen, LINE_COLOR, (2 * SQUARE_SIZE, 0), (2 * SQUARE_SIZE, HEIGHT), LINE_WIDTH)
+
+        def draw_figures():
+            for row in range(BOARD_ROWS):
+                for col in range(BOARD_COLS):
+                    if board[row][col] == 1:
+                        pygame.draw.circle(screen, CIRCLE_COLOR, (
+                        int(col * SQUARE_SIZE + SQUARE_SIZE // 2), int(row * SQUARE_SIZE + SQUARE_SIZE // 2)),
+                                           CIRCLE_RADIUS, CIRCLE_WIDTH)
+                    elif board[row][col] == 2:
+                        pygame.draw.line(screen, CROSS_COLOR,
+                                         (col * SQUARE_SIZE + SPACE, row * SQUARE_SIZE + SQUARE_SIZE - SPACE),
+                                         (col * SQUARE_SIZE + SQUARE_SIZE - SPACE, row * SQUARE_SIZE + SPACE),
+                                         CROSS_WIDTH)
+                        pygame.draw.line(screen, CROSS_COLOR, (col * SQUARE_SIZE + SPACE, row * SQUARE_SIZE + SPACE), (
+                        col * SQUARE_SIZE + SQUARE_SIZE - SPACE, row * SQUARE_SIZE + SQUARE_SIZE - SPACE), CROSS_WIDTH)
+
+        def mark_square(row, col, player):
+            board[row][col] = player
+
+        def available_square(row, col):
+            return board[row][col] == 0
+
+        def is_board_full():
+            for row in range(BOARD_ROWS):
+                for col in range(BOARD_COLS):
+                    if board[row][col] == 0:
+                        return False
+
+            return True
+
+        def check_win(player):
+            # vertical win check
+            for col in range(BOARD_COLS):
+                if board[0][col] == player and board[1][col] == player and board[2][col] == player:
+                    draw_vertical_winning_line(col, player)
+                    return True
+
+            # horizontal win check
+            for row in range(BOARD_ROWS):
+                if board[row][0] == player and board[row][1] == player and board[row][2] == player:
+                    draw_horizontal_winning_line(row, player)
+                    return True
+
+            # asc diagonal win check
+            if board[2][0] == player and board[1][1] == player and board[0][2] == player:
+                draw_asc_diagonal(player)
+                return True
+
+            # desc diagonal win chek
+            if board[0][0] == player and board[1][1] == player and board[2][2] == player:
+                draw_desc_diagonal(player)
+                return True
+
+            return False
+
+        def draw_vertical_winning_line(col, player):
+            posX = col * SQUARE_SIZE + SQUARE_SIZE // 2
+
+            if player == 1:
+                color = CIRCLE_COLOR
+            elif player == 2:
+                color = CROSS_COLOR
+
+            pygame.draw.line(screen, color, (posX, 15), (posX, HEIGHT - 15), LINE_WIDTH)
+
+        def draw_horizontal_winning_line(row, player):
+            posY = row * SQUARE_SIZE + SQUARE_SIZE // 2
+
+            if player == 1:
+                color = CIRCLE_COLOR
+            elif player == 2:
+                color = CROSS_COLOR
+
+            pygame.draw.line(screen, color, (15, posY), (WIDTH - 15, posY), WIN_LINE_WIDTH)
+
+        def draw_asc_diagonal(player):
+            if player == 1:
+                color = CIRCLE_COLOR
+            elif player == 2:
+                color = CROSS_COLOR
+
+            pygame.draw.line(screen, color, (15, HEIGHT - 15), (WIDTH - 15, 15), WIN_LINE_WIDTH)
+
+        def draw_desc_diagonal(player):
+            if player == 1:
+                color = CIRCLE_COLOR
+            elif player == 2:
+                color = CROSS_COLOR
+
+            pygame.draw.line(screen, color, (15, 15), (WIDTH - 15, HEIGHT - 15), WIN_LINE_WIDTH)
+
+        def restart():
+            screen.fill(BG_COLOR)
+            draw_lines()
+            for row in range(BOARD_ROWS):
+                for col in range(BOARD_COLS):
+                    board[row][col] = 0
+
+        draw_lines()
+
+        # ---------
+        # VARIABLES
+        # ---------
+        player = 1
+        game_over = False
+
+        # --------
+        # MAINLOOP
+        # --------
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    sys.exit()
+
+                if event.type == pygame.MOUSEBUTTONDOWN and not game_over:
+
+                    mouseX = event.pos[0]  # x
+                    mouseY = event.pos[1]  # y
+
+                    clicked_row = int(mouseY // SQUARE_SIZE)
+                    clicked_col = int(mouseX // SQUARE_SIZE)
+
+                    if available_square(clicked_row, clicked_col):
+
+                        mark_square(clicked_row, clicked_col, player)
+                        if check_win(player):
+                            game_over = True
+                        player = player % 2 + 1
+
+                        draw_figures()
+
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_r:
+                        restart()
+                        player = 1
+                        game_over = False
+
+            pygame.display.update()
+
+    elif "goodbye" in command:
+        talk("bye")
+        exit()
+    else:
+        talk('Please say the command again.')
+
+
+while True:
+    run_angel();
